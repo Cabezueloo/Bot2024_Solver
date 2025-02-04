@@ -45,6 +45,10 @@ class Board:
         move = False
 
         #UPT
+    
+
+
+
         for col in range(4):
 
             for row in range(4):
@@ -187,7 +191,58 @@ class Board:
         print("LEFT")                                
         self.showBoard(boardToHandle)
 
+        #RIGHT
+        boardToHandle = copy.deepcopy(self.board)    
+        col_tomove= -1
+                
+        move = False
 
+        for row in range(4):
+            for col in reversed(range(4)):
+                if (col+1<=4 and boardToHandle[row][col].value != 0):
+                    cont = 0
+                    for y in range(col,3):
+                        
+                        cont+=1
+
+                        #Si izquierda es 0, no hara nada ya que podrá ver mas alla de ese
+                        if (boardToHandle[row][col+cont].value == 0):
+                            move  = True
+                            col_tomove = col+cont
+                            
+                            pass
+
+                        #Si la de arriba es igual, lo sumara arriba
+                        elif(boardToHandle[row][col+cont].value == boardToHandle[row][col].value and not boardToHandle[row][col+cont].joined):
+                            boardToHandle[row][col].value = 0
+                            boardToHandle[row][col+cont].value +=boardToHandle[row][col+cont].value
+                            boardToHandle[row][col+cont].joined = True
+                            
+                            #Contar bloque sumado
+                            bloquesUnidosTemporal+=1
+
+                            break
+
+                        #Cuando entre aquí, sera porque es diferente y no puede subir mas
+                        else:
+                            break
+            #Mover arriba lo que pueda 
+                if move:
+                    boardToHandle[row][col_tomove].value = boardToHandle[row][col].value
+                    boardToHandle[row][col].value = 0
+                move = False
+           
+            if bloquesUnidosTemporal > bloquesUnidosFinal:
+                bloquesUnidosFinal = bloquesUnidosTemporal
+                #TODO
+                movimientoHaHacer = RIGHT
+
+            
+        
+
+
+        print("RIGHT")                                
+        self.showBoard(boardToHandle)
 
         print("MOV-> " ,movimientoHaHacer)
 
