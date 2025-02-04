@@ -24,3 +24,6 @@ class View:
             board+="\n"
         
         print(board)
+
+for x in reversed(range(4)):
+    print(x)

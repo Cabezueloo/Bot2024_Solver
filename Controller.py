@@ -4,20 +4,21 @@ from Model import Board
 from View import View
 from PIL import Image, ImageDraw
 from matplotlib import pyplot as plt
+import keyboard 
 
 import numpy as np
 
 
  
-COLOR_DOS_RGB = [238, 228, 218]
-COLOR_CUATRO_RGB = [237,223,200]
-COLOR_OCHO_RGB = [242,177,121]
-COLOR_16_RGB = [245,149,99]
-COLOR_32_RGB = [246,124,95]
-COLOR_64_RGB = [246,94,59]
+COLOR_DOS_RGB = [239, 228, 219]
+COLOR_CUATRO_RGB = [238,223,202]
+COLOR_OCHO_RGB = [246,176,126]
+COLOR_16_RGB = [249,149,105]
+COLOR_32_RGB = [251,125,100]
+COLOR_64_RGB = [251,95,68]
 COLOR_128_RGB = [237,206,114]
 COLOR_256_RGB = [237,204,97]
-COLOR_ZERO_RGB = [ 204,193,180]
+COLOR_ZERO_RGB = [ 205,193,181]
 
 
 def detectNumber(region) -> int:
@@ -25,9 +26,9 @@ def detectNumber(region) -> int:
     for x in range(10):
         for y in range(10):
             
-            print(f"1 -> {region[x][y][0]} y {COLOR_ZERO_RGB[0]}")
-            print(f"2-> {region[x][y][1]} y {COLOR_ZERO_RGB[1]}" )
-            print(f"3 -> {region[x][y][2]} y {COLOR_ZERO_RGB[2]}")
+            print(f"1 -> {region[x][y][0]}")
+            print(f"2-> {region[x][y][1]}" )
+            print(f"3 -> {region[x][y][2]}")
 
 
             if region[x][y][0]==COLOR_ZERO_RGB[0] and region[x][y][1]==COLOR_ZERO_RGB[1] and (region[x][y][2]==COLOR_ZERO_RGB[2] or region[x][y][2]==178):
@@ -70,24 +71,28 @@ class Controller:
         img = self.view.makeScreenshot()
         image_np = np.array(img)
        
-        print(f"Tamagno bloque partido -> {self.view.SIZEBLOCK/2}")
-        print(f"Tamagno bloque -> {self.view.SIZEBLOCK}")
+        #print(f"Tamagno bloque partido -> {self.view.SIZEBLOCK/2}")
+        #print(f"Tamagno bloque -> {self.view.SIZEBLOCK}")
 
-        print(f"Bottom - {self.view.bottom}")
-        print(f"right - {self.view.right}")
+       # print(f"Bottom - {self.view.bottom}")
+       # print(f"right - {self.view.right}")
 
                
         self.createBoard(image_np,img)
+    
+                  
         
 
-                   
+        move = self.model.bestMove()
+        print("--------------------")
+
+        print("ORIGINAl")                                
         self.view.showBoard()
 
-        self.model.bestMove()
+
+
+
                 
-               
-                
-   
     def createBoard(self,image_np,img):
         for row in range(4):
 
