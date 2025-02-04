@@ -30,44 +30,50 @@ class Board:
         for x in range(4):
             for y in range(4):
                 self.board[x][y].joined = False
-    
-    def bestMove(self) -> int :
+
+
+    def simulateMovement(self,moveToSimulate) -> int:
         
         bloquesUnidosTemporal = 0
-
-        bloquesUnidosFinal = -1
-        movimientoHaHacer = -1
-        
         
         boardToHandle = copy.deepcopy(self.board)
-        row_tomove= -1
-        
+        tomove= -1
         move = False
 
-        #UPT
-    
-
-
+        
+        #UP-LEFT merge
 
         for col in range(4):
 
             for row in range(4):
-#                print( boardToHandle[row][col].value)
-                if (row-1>=0 and boardToHandle[row][col].value != 0):
+
+                if (moveToSimulate==UP):
+                    actualBox = boardToHandle[row][col]
+                else:
+                    actualBox = boardToHandle[col][row]
+
+                if (row-1>=0 and actualBox.value != 0):
+
                     for y in range(0,row):
 
+                        if (moveToSimulate==UP):
+                            simultadeBox = boardToHandle[row-y-1][col]
+                        else:
+                            simultadeBox = boardToHandle[col][row-y-1]
+
+
                         #Si arriba es 0, no hara nada ya que podrá ver mas alla de ese
-                        if (boardToHandle[row-y-1][col].value == 0):
+                        if (simultadeBox.value == 0):
                             move  = True
-                            row_tomove = row-y-1
+                            tomove = row-y-1
                             
                             pass
 
                         #Si la de arriba es igual, lo sumara arriba
-                        elif(boardToHandle[row-y-1][col].value == boardToHandle[row][col].value and not boardToHandle[row-y-1][col].joined):
-                            boardToHandle[row][col].value = 0
-                            boardToHandle[row-y-1][col].value +=boardToHandle[row-y-1][col].value
-                            boardToHandle[row-y-1][col].joined = True
+                        elif(simultadeBox.value == actualBox.value and not simultadeBox.joined):
+                            actualBox.value = 0
+                            simultadeBox.value += simultadeBox.value
+                            simultadeBox.joined = True
                             
                             #Contar bloque sumado
                             bloquesUnidosTemporal+=1
@@ -77,19 +83,52 @@ class Board:
                         #Cuando entre aquí, sera porque es diferente y no puede subir mas
                         else:
                             break
-            #Mover arriba lo que pueda 
-                if move:
-                    boardToHandle[row_tomove][col].value = boardToHandle[row][col].value
-                    boardToHandle[row][col].value = 0
-                move = False
 
-        if bloquesUnidosTemporal > bloquesUnidosFinal:
-            bloquesUnidosFinal = bloquesUnidosTemporal
-            #TODO
+                if(move):
+                    #Mover arriba lo que pueda 
+                    if moveToSimulate == UP:
+                        boardToHandle[tomove][col].value = actualBox.value
+                        actualBox.value = 0
+                    else:
+                        boardToHandle[col][tomove].value = actualBox.value
+                        actualBox.value = 0
+                    move = False
+
+        self.showBoard(boardToHandle)
+
+        return bloquesUnidosTemporal
+       
+    
+    def bestMove(self) -> int :
+        
+        bloquesUnidosTemporal =-1
+        
+        bloquesUnidosFinal = -1
+        
+        movimientoHaHacer = -1
+        
+        move = False
+
+        #UP
+        print("UP") 
+        unidos = self.simulateMovement(UP)
+        if(unidos>bloquesUnidosFinal)   :
+            bloquesUnidosFinal = unidos
             movimientoHaHacer = UP
         
-        print("UP")                                
-        self.showBoard(boardToHandle)
+                                       
+        print("LEFT")                                
+        unidos = self.simulateMovement(LEFT)
+        if(unidos>bloquesUnidosFinal)   :
+            bloquesUnidosFinal = unidos
+            movimientoHaHacer = LEFT
+
+        
+        
+
+
+
+
         
         #DOWN
         boardToHandle = copy.deepcopy(self.board)    
@@ -144,52 +183,6 @@ class Board:
         self.showBoard(boardToHandle)
 
 
-        #LEFT
-
-        boardToHandle = copy.deepcopy(self.board)    
-        col_tomove= -1
-                
-        move = False
-
-        for row in range(4):
-            for col in range(4):
-                if (col-1>=0 and boardToHandle[row][col].value != 0):
-                    for y in range(0,col):
-
-                        #Si izquierda es 0, no hara nada ya que podrá ver mas alla de ese
-                        if (boardToHandle[row][col-y-1].value == 0):
-                            move  = True
-                            col_tomove = col-y-1
-                            
-                            pass
-
-                        #Si la de arriba es igual, lo sumara arriba
-                        elif(boardToHandle[row][col-y-1].value == boardToHandle[row][col].value and not boardToHandle[row][col-y-1].joined):
-                            boardToHandle[row][col].value = 0
-                            boardToHandle[row][col-y-1].value +=boardToHandle[row][col-y-1].value
-                            boardToHandle[row][col-y-1].joined = True
-                            
-                            #Contar bloque sumado
-                            bloquesUnidosTemporal+=1
-
-                            break
-
-                        #Cuando entre aquí, sera porque es diferente y no puede subir mas
-                        else:
-                            break
-            #Mover arriba lo que pueda 
-                if move:
-                    boardToHandle[row][col_tomove].value = boardToHandle[row][col].value
-                    boardToHandle[row][col].value = 0
-                move = False
-           
-            if bloquesUnidosTemporal > bloquesUnidosFinal:
-                bloquesUnidosFinal = bloquesUnidosTemporal
-                #TODO
-                movimientoHaHacer = LEFT
-
-        print("LEFT")                                
-        self.showBoard(boardToHandle)
 
         #RIGHT
         boardToHandle = copy.deepcopy(self.board)    
