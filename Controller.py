@@ -5,8 +5,9 @@ from View import View
 from PIL import Image, ImageDraw
 from matplotlib import pyplot as plt
 import keyboard 
-
+import time
 import numpy as np
+import pyautogui
 
 
  
@@ -16,8 +17,8 @@ COLOR_OCHO_RGB = [246,176,126]
 COLOR_16_RGB = [249,149,105]
 COLOR_32_RGB = [251,125,100]
 COLOR_64_RGB = [251,95,68]
-COLOR_128_RGB = [237,206,114]
-COLOR_256_RGB = [237,204,97]
+COLOR_128_RGB = [240,205,122]
+COLOR_256_RGB = [240,202,107]
 COLOR_ZERO_RGB = [ 205,193,181]
 
 
@@ -26,9 +27,9 @@ def detectNumber(region) -> int:
     for x in range(10):
         for y in range(10):
             
-            print(f"1 -> {region[x][y][0]}")
-            print(f"2-> {region[x][y][1]}" )
-            print(f"3 -> {region[x][y][2]}")
+           # print(f"1 -> {region[x][y][0]}")
+            #print(f"2-> {region[x][y][1]}" )
+            #print(f"3 -> {region[x][y][2]}")
 
 
             if region[x][y][0]==COLOR_ZERO_RGB[0] and region[x][y][1]==COLOR_ZERO_RGB[1] and (region[x][y][2]==COLOR_ZERO_RGB[2] or region[x][y][2]==178):
@@ -67,33 +68,30 @@ class Controller:
 
 
     def main_loop(self):
-      
-        img = self.view.makeScreenshot()
-        image_np = np.array(img)
-       
-        #print(f"Tamagno bloque partido -> {self.view.SIZEBLOCK/2}")
-        #print(f"Tamagno bloque -> {self.view.SIZEBLOCK}")
-
-       # print(f"Bottom - {self.view.bottom}")
-       # print(f"right - {self.view.right}")
-
-               
-        self.createBoard(image_np,img)
-    
-                  
         
+        for x in range(2000):
+            t = time.time()
+            img = self.view.makeScreenshot()
+            image_np = np.array(img)
+            
+                    
+            self.createBoard(image_np,img)
 
-        move = self.model.bestMove()
-        print("--------------------")
+            move = self.model.bestMove()
+            
+            print("--------------------")
+            
+            print("ORIGINAl")                                
+            self.view.showBoard()
+            
+            pyautogui.press(move)
+            print(f"Tiempo en saber la mejor pulsación -> {time.time() - t}")
+            
 
-        print("ORIGINAl")                                
-        self.view.showBoard()
-
-
-
-
-                
+              
     def createBoard(self,image_np,img):
+        self.putAllNotJoined()
+
         for row in range(4):
 
             for column in range(4):
@@ -112,17 +110,7 @@ class Controller:
                 # Obtener los píxeles dentro del radio alrededor del centro
                 region = image_np[max(0, center_y - radio): center_y + radio, max(0, center_x - radio): center_x + radio]
 
-                # Guardar la subimagen de la región en un archivo
-                if((row==2 and column==3) or (row==0 and column==0)):
-                    subimage = img.crop((max(0, center_x - radio), max(0, center_y - radio),
-                                                center_x + radio, center_y + radio))
-                    subimage_path = f"region_row{row}_col{column}.png"
-                    subimage.save(subimage_path)
-
-                print(region[0][0])
-                if(row==2 and column==3):
-                    print("x")
-                
+                                    
                 number = detectNumber(region)
 
                 self.model.board[row][column].value = number

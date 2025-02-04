@@ -4,8 +4,6 @@ from Model import Board
 from View import View
 from Controller import Controller
 
-
-import io
 import pyscreenshot as ImageGrab
 from PIL import Image
 coord = []
