@@ -11,6 +11,7 @@ import pyautogui
 
 
  
+
 COLOR_DOS_RGB = [239, 228, 219]
 COLOR_CUATRO_RGB = [238,223,202]
 COLOR_OCHO_RGB = [246,176,126]
@@ -19,9 +20,10 @@ COLOR_32_RGB = [251,125,100]
 COLOR_64_RGB = [251,95,68]
 COLOR_128_RGB = [240,205,122]
 COLOR_256_RGB = [240,202,107]
+COLOR_512_RGB = [240,198,93]
 COLOR_ZERO_RGB = [ 205,193,181]
 
-
+#TODO improve number detection, sometimes the more easy is the best...
 def detectNumber(region) -> int:
     
     for x in range(10):
@@ -52,6 +54,8 @@ def detectNumber(region) -> int:
                 return 128
             if region[x][y][0]==COLOR_256_RGB[0] and region[x][y][1]==COLOR_256_RGB[1] and region[x][y][2]==COLOR_256_RGB[2]:                
                 return 256
+            if region[x][y][0]==COLOR_512_RGB[0] and region[x][y][1]==COLOR_512_RGB[1] and region[x][y][2]==COLOR_512_RGB[2]:                
+                return 512
 
 
 
@@ -77,15 +81,18 @@ class Controller:
                     
             self.createBoard(image_np,img)
 
-            move = self.model.bestMove()
-            
+            #TODO try to implements IA 
+            move = self.model.bestMove(IA=False)
+            print("ORIGINAl")    
+            self.view.showBoard()
+
+            print(f"MOVIMIENTO -> {move}")
+            print(f"Tiempo en saber la mejor pulsación -> {time.time() - t}")
             print("--------------------")
             
-            print("ORIGINAl")                                
-            self.view.showBoard()
-            
+                                  
             pyautogui.press(move)
-            print(f"Tiempo en saber la mejor pulsación -> {time.time() - t}")
+            
             
 
               

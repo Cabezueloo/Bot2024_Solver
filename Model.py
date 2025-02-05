@@ -1,7 +1,8 @@
 import numpy as np
 import array as arr
 import copy
-
+from ollama import chat
+from ollama import ChatResponse
 
 
 UP = 1
@@ -167,53 +168,67 @@ class Board:
         return bloquesUnidosTemporal
        
     
-    def bestMove(self) -> str :
+    def bestMove(self,IA:bool) -> str :
         
-        
-        bloquesUnidosFinal = -1
-        
-        movimientoHaHacer = -1
-        
-        #UP
-        print("UP") 
-        unidos = self.simulateMovement(UP)
-        if(unidos>bloquesUnidosFinal)   :
-            bloquesUnidosFinal = unidos
-            movimientoHaHacer = "up"
-        
-                                       
-        print("LEFT")                                
-        unidos = self.simulateMovement(LEFT)
-        if(unidos>bloquesUnidosFinal)   :
-            bloquesUnidosFinal = unidos
-            movimientoHaHacer = "left"
+        if not IA:
+            bloquesUnidosFinal = -1
+            
+            movimientoHaHacer = -1
+            
+            #UP
+            
+            unidos = self.simulateMovement(UP)
+            if(unidos>bloquesUnidosFinal)   :
+                bloquesUnidosFinal = unidos
+                movimientoHaHacer = "up"
+            
+            #left
+            unidos = self.simulateMovement(LEFT)
+            if(unidos>bloquesUnidosFinal)   :
+                bloquesUnidosFinal = unidos
+                movimientoHaHacer = "left"
 
-        #DOWN
-
-
-        print("DOWN")                                
-        unidos = self.simulateMovement(DOWN)
-        if(unidos>bloquesUnidosFinal)   :
-            bloquesUnidosFinal = unidos
-            movimientoHaHacer = "down"
+            #DOWN
+            unidos = self.simulateMovement(DOWN)
+            if(unidos>bloquesUnidosFinal)   :
+                bloquesUnidosFinal = unidos
+                movimientoHaHacer = "down"
 
 
-        #RIGHT
-        print("RIGHT")                                
-        unidos = self.simulateMovement(RIGHT)
-        if(unidos>bloquesUnidosFinal)   :
-            bloquesUnidosFinal = unidos
-            movimientoHaHacer = "right"
-        
-           
+            #RIGHT
+            unidos = self.simulateMovement(RIGHT)
+            if(unidos>bloquesUnidosFinal)   :
+                bloquesUnidosFinal = unidos
+                movimientoHaHacer = "right"
 
-        print("MOV-> " ,movimientoHaHacer)
+        # TODO IA turn    
+        else:
+            self.returnBoard()
+            response : ChatResponse = chat(model="deepseek-r1:8b",messages=[
+                {
+                    'role' : 'user',
+                    'content':  f'I need you to tell me what move to do in the game 2048, you can only answer (right, left, up, down).  Based on the move to make. Remember, the answer must be one word only,lowercase and without dots\nHere is the current game board\n{self.returnBoard()}'
+                    
+                }
+            ])
+            movimientoHaHacer =(response.message.content)
+
+        
 
         return movimientoHaHacer
 
 
 
+    def returnBoard(self) -> str:
+        answ : str = ""
+        for row in range(4):
+            for col in range(4):
+                answ+= f"{self.board[row][col].value} | "
+            answ+="\n"
         
+        return answ
+
+
     def showBoard(self,boardd):
 
         board : str = ""
