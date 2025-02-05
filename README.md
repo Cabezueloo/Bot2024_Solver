@@ -30,15 +30,13 @@ Ejecuta el programa.
 ### Paso 2:
 Haz clic en el área indicada por la imagen y observa cómo el bot toma decisiones automáticamente.
 
-![](imgsREADME/board.png)
-
 ---
 
 ## Video de Demostración
 
 Puedes ver una demostración del bot en acción a continuación:
 
-![](imgsREADME/test_2048.webm)
+https://github.com/user-attachments/assets/d6f8aadf-98f3-4c41-b7cf-725f67a9feba
 
 ---
 
