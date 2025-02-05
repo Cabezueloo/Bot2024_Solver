@@ -73,7 +73,7 @@ class Controller:
 
     def main_loop(self):
         
-        for x in range(2000):
+        for x in range(400):
             t = time.time()
             img = self.view.makeScreenshot()
             image_np = np.array(img)
@@ -81,11 +81,12 @@ class Controller:
                     
             self.createBoard(image_np,img)
 
-            #TODO try to implements IA 
-            move = self.model.bestMove(IA=False)
             print("ORIGINAl")    
             self.view.showBoard()
 
+            #TODO try to implements IA 
+            move = self.model.bestMove(IA=False)
+            
             print(f"MOVIMIENTO -> {move}")
             print(f"Tiempo en saber la mejor pulsación -> {time.time() - t}")
             print("--------------------")
