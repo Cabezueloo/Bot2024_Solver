@@ -43,7 +43,11 @@ class Board:
 
     def simulateMovement(self,moveToSimulate,boardToHandle,dictionaryMergedBlocks : dict = dict(), exit : int= 0,bloquesUnidosTemporal : int = 0 ) -> int:
         
-                       
+
+      
+
+        dictionaryMergedBlocks.clear()
+        dictionaryMergedBlocks[0] = 0
         tomove= -1
         move = False
         movementMaded = False
@@ -71,7 +75,8 @@ class Board:
 
                             #Si la de arriba es igual, lo sumara arriba
                             elif(simultadeBox.value == actualBox.value and not simultadeBox.joined):
-                               
+                                
+                                dictionaryMergedBlocks[simultadeBox.value] = dictionaryMergedBlocks.get(simultadeBox.value,0)+1
                                 self.mergeValues(simultadeBox,actualBox)
                                 bloquesUnidosTemporal+=1
                                 break
@@ -121,8 +126,10 @@ class Board:
                             #Si la de abajo es igual, lo sumara abajo
                             elif(simultadeBox.value == actualBox.value and not simultadeBox.joined):
                                 
+                                dictionaryMergedBlocks[simultadeBox.value] = dictionaryMergedBlocks.get(simultadeBox.value,0)+1                               
                                 self.mergeValues(simultadeBox,actualBox)
                                 bloquesUnidosTemporal+=1
+                                
                                 break
                             
                             #Cuando entre aquí, sera porque es diferente y no puede subir mas
@@ -139,33 +146,35 @@ class Board:
                         
                         actualBox.value = 0
                     move = False
+       
 
-        #print(moveToSimulate)
+        #print(f"Move to simulated -> {moveToSimulate}")
         #self.showBoard(boardToHandle)
 
+
         #Cuando sea 1, no hara mas posiblidades de recursividad y retornara
+
         if not exit == 1 :
             if not (movementMaded) : 
-                print(f"No ha hecho movimientos -> {moveToSimulate}")
+                #print(f"No ha hecho movimientos -> {moveToSimulate}")
                 return -1
             
-            bloquesRetornoFinal = bloquesUnidosTemporal   
+            bloqueMaximoUnido = max(dictionaryMergedBlocks)
+            bloqueMaximoUnidoFinal = bloqueMaximoUnido
+
             for movement in POSSIBLE_MOVEMENTS:
                 
-                bloquesRetornoTemp = self.simulateMovement(movement, copy.deepcopy(boardToHandle), copy.deepcopy(dictionaryMergedBlocks),exit = exit+1 )
-                
-                #print(f"Bloques unidos temporal {bloquesUnidosTemporal}")
-                #print(f"Bloques retorno temp {bloquesRetornoTemp}")
-                #print(f"Bloques retorno final {bloquesRetornoFinal}")
+                bloquesRetornoTemp = self.simulateMovement(movement, copy.deepcopy(boardToHandle),exit = exit+1 )
+                #print(f"bloquesRetornoTemp -> {bloquesRetornoTemp}" )
 
-                if(bloquesRetornoTemp+bloquesUnidosTemporal>bloquesRetornoFinal):
-                    bloquesRetornoFinal = bloquesRetornoTemp+bloquesUnidosTemporal
-            print(f"Bloques retorno final -> {bloquesRetornoFinal}" )
+                if(bloquesRetornoTemp>bloqueMaximoUnidoFinal):
+                    bloqueMaximoUnidoFinal = bloquesRetornoTemp
+            print(f"Bloques retorno final -> {bloqueMaximoUnidoFinal}" )
             #Retorno final
-            return bloquesRetornoFinal
+            return bloqueMaximoUnidoFinal
 
         #De recurvidad
-        return bloquesUnidosTemporal
+        return max(dictionaryMergedBlocks)
     
     def mergeValues(self, simultadeBox,actualBox):
         actualBox.value = 0
@@ -186,10 +195,12 @@ class Board:
             
             
             for key,value in moviments.items():
+                
                 unidos = self.simulateMovement(key, copy.deepcopy(self.board))
                 if(unidos>bloquesUnidosFinal):
                     bloquesUnidosFinal = unidos
                     movimientoHaHacer = value
+                
 
         # TODO IA turn    
         else:
@@ -224,7 +235,10 @@ class Board:
         board : str = ""
         for row in range(4):
             for col in range(4):
+                if boardd[row][col].joined:
+                    board+='\033[92m'
                 board+= f"{boardd[row][col].value} | "
+                board+='\033[0m'
             board+="\n"
         
         print(board)

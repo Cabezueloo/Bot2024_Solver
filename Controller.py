@@ -73,7 +73,7 @@ class Controller:
 
     def main_loop(self):
         
-        for x in range(400):
+        for x in range(1500):
             t = time.time()
             img = self.view.makeScreenshot()
             image_np = np.array(img)
